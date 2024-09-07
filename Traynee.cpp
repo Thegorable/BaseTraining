@@ -129,7 +129,6 @@ SharedPtr<T>::~SharedPtr()
         ptr_ = nullptr;
     }
 }
-//#endif
 
 void TextEditor::edit() {
     getline(cin, input_text);
@@ -143,22 +142,18 @@ void TextEditor::edit() {
     }
 
     for (int i = 0; i < static_cast<int>(input_text.size()) && i < prev_text.size(); i++) {
-        auto it = prev_text.begin();
 
         switch (input_text[i]) {
         case ' ':
-            advance(it, i);
             break;
 
         case '-':
-            advance(it, i);
-            prev_text.erase(it);
+            prev_text.erase(i);
             break;
         
         default:
-            advance(it, i);
             if (i <= prev_text.size()) {
-                prev_text.insert(it, input_text[i]);
+                prev_text.insert(i, input_text[i]);
             }
             else {
                 prev_text.push_back(input_text[i]);
@@ -170,8 +165,8 @@ void TextEditor::edit() {
     MoveCursorUp();
     system("cls");
 
-    for (const char& c : prev_text) {
-        cout << c;
+    for (int i(0); i < prev_text.size(); i++) {
+        cout << prev_text[i];
     }
     cout << '\n';
 }
@@ -182,4 +177,72 @@ TextEditor::TextEditor() {
 
 void TextEditor::MoveCursorUp() {
     SetConsoleCursorPosition(h_out, {0, 0});
+}
+
+void list_tester() {
+    List<int> list_test;
+    list<int> list_std;
+    auto it = list_std.begin();
+
+    int iterations = 10000;
+
+    int push_back = 0;
+    int push_front = 0;
+    int insert = 0;
+    int erase = 0;
+
+    for (int i = 0; i < iterations; i++) {
+
+        int method_num = rand() % 4;
+        int rand_num = rand() % (iterations - 1);
+        int rand_place = 0;
+
+        if (list_test.size() > 1) {
+            rand_place = rand() % (list_test.size() - 1);
+        }
+
+        it = list_std.begin();
+
+        switch (method_num) {
+        case 0:
+            list_test.push_back(rand_num);
+            list_std.push_back(rand_num);
+            push_back++;
+            break;
+
+        case 1:
+            list_test.push_front(rand_num);
+            list_std.push_front(rand_num);
+            push_front++;
+            break;
+
+        case 2:
+            list_test.insert(rand_num, rand_place);
+            advance(it, rand_place);
+            list_std.insert(it, rand_num);
+            insert++;
+            break;
+
+        case 3:
+            list_test.erase(rand_place);
+            advance(it, rand_place);
+            list_std.erase(it);
+            erase++;
+            break;
+        }
+    }
+    for (int i = 0; i < list_test.size(); i++) {
+        cout << list_test[i];
+    }
+    cout << "push_back: "s << '\t' << push_back << '\n';
+    cout << "push_front: "s << '\t' << push_front << '\n';
+    cout << "insert: "s << '\t' << insert << '\n';
+    cout << "erase: "s << '\t' << erase << '\n';
+
+    cout << '\n';
+    for (int i : list_std) {
+        cout << i;
+    }
+
+    cout << '\n';
 }
