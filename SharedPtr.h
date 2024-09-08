@@ -6,7 +6,7 @@ public:
     SharedPtr();
     SharedPtr(T* ptr);
     SharedPtr(const SharedPtr& s_ptr);
-    SharedPtr(SharedPtr&& s_ptr);
+    SharedPtr(SharedPtr&& s_ptr) noexcept;
 
     T* get();
     void reset(T* elem_ptr);
@@ -16,7 +16,7 @@ public:
     T& operator *();
     T* operator ->();
     SharedPtr& operator =(const SharedPtr& s_ptr);
-    SharedPtr& operator =(SharedPtr&& s_ptr);
+    SharedPtr& operator =(SharedPtr&& s_ptr) noexcept;
 
     ~SharedPtr();
 
@@ -47,7 +47,7 @@ SharedPtr<T>::SharedPtr(const SharedPtr<T>& s_ptr) {
 }
 
 template<typename T>
-SharedPtr<T>::SharedPtr(SharedPtr<T>&& ptr) {
+SharedPtr<T>::SharedPtr(SharedPtr<T>&& ptr) noexcept {
     ptr_ = ptr.ptr_;
     count_ = ptr.count_;
     ptr.ptr_ = nullptr;
@@ -106,7 +106,7 @@ SharedPtr<T>& SharedPtr<T>::operator =(const SharedPtr<T>& s_ptr) {
 }
 
 template<typename T>
-SharedPtr<T>& SharedPtr<T>::operator =(SharedPtr<T>&& s_ptr) {
+SharedPtr<T>& SharedPtr<T>::operator =(SharedPtr<T>&& s_ptr) noexcept {
     reduce_count(1);
     ptr_ = s_ptr.ptr_;
     count_ = s_ptr.count_;

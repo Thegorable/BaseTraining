@@ -177,8 +177,14 @@ void List<T>::pop_front() {
     }
 
     size_--;
-    first_node_ = first_node_->next_node_ptr;
-    first_node_->prev_node_ptr.reset();
+    if (first_node_->next_node_ptr.get() != nullptr) {
+        first_node_ = first_node_->next_node_ptr;
+        first_node_->prev_node_ptr.reset();
+    }
+    else {
+        first_node_.reset();
+        tail_node_.reset();
+    }
 }
 
 template <typename T>
@@ -188,8 +194,14 @@ void List<T>::pop_back() {
     }
 
     size_--;
-    tail_node_ = tail_node_->prev_node_ptr;
-    tail_node_->next_node_ptr.reset();
+    if (tail_node_->prev_node_ptr.get() != nullptr) {
+        tail_node_ = tail_node_->prev_node_ptr;
+        tail_node_->next_node_ptr.reset();
+    }
+    else {
+        first_node_.reset();
+        tail_node_.reset();
+    }
 }
 
 template <typename T>
@@ -286,17 +298,9 @@ std::ostream& operator <<(std::ostream& out, const List<T>& l) {
 
 template <typename T>
 void List<T>::clear() {
-
-    SharedPtr<Node>& temp = first_node_;
-    temp = first_node_;
-    for (int i = 0; i < size_ - 1; i++) {
-        temp = temp->next_node_ptr;
-        temp->prev_node_ptr.reset();
+    while(size_) {
+        pop_front();
     }
-    temp.reset();
-    tail_node_.reset();
-
-    size_ = 0;
 }
 
 template <typename T>
